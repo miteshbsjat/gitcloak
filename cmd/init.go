@@ -6,10 +6,12 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/manifoldco/promptui"
 	"github.com/miteshbsjat/gitcloak/pkg/encrypt"
+	"github.com/miteshbsjat/gitcloak/pkg/git"
 	"github.com/miteshbsjat/gitcloak/pkg/gitcloak"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 
@@ -66,10 +68,17 @@ var initCmd = &cobra.Command{
 		_, err = gitCloakConfig.CreateGitCloakConfig()
 		CheckIfError(err)
 		// commit config file
-		commitHash, err := gitcloak.GitCloakGitCommit("Initial Commit GitCloak")
+		gcCommitHash, err := gitcloak.GitCloakGitCommit("gitcloak init commit")
 		CheckIfError(err)
-		fmt.Println(commitHash)
-
+		fmt.Println(gcCommitHash)
+		pwd, err := os.Getwd()
+		CheckIfError(err)
+		gCommitHash, err := git.GetGitCommitHash(pwd)
+		CheckIfError(err)
+		fmt.Println(gCommitHash)
+		gitcloak.PutGitAndGitCloak(gCommitHash, gcCommitHash)
+		_, err = gitcloak.GitCloakGitCommit("gitcloak init mapped commit hashes")
+		CheckIfError(err)
 	},
 }
 

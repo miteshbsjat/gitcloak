@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/go-git/go-git/v5"
 )
 
 var gitBaseDir string = ""
@@ -36,4 +38,19 @@ func findGitRootDir() (string, error) {
 		}
 		currentDir = parentDir
 	}
+}
+
+func GetGitCommitHash(repoPath string) (string, error) {
+	repo, err := git.PlainOpen(repoPath)
+	if err != nil {
+		return "", err
+	}
+
+	ref, err := repo.Head()
+	if err != nil {
+		return "", err
+	}
+
+	hash := ref.Hash()
+	return hash.String(), nil
 }
