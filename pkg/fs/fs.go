@@ -1,4 +1,4 @@
-package gitcloak
+package fs
 
 import (
 	"bufio"
@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func addLineToFile(filePath, lineToAdd string) error {
+func AddLineToFile(filePath, lineToAdd string) error {
 	// Open the file in read-write mode, create if it doesn't exist, and append if it does exist
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
@@ -32,7 +32,7 @@ func addLineToFile(filePath, lineToAdd string) error {
 	return nil
 }
 
-func appendLineToFile(filePath, line string) error {
+func AppendLineToFile(filePath, line string) error {
 	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
 		return err

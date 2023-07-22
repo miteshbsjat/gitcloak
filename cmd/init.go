@@ -6,6 +6,8 @@ package cmd
 import (
 	"fmt"
 
+	mfs "github.com/miteshbsjat/gitcloak/pkg/fs"
+
 	"github.com/spf13/cobra"
 )
 
@@ -37,5 +39,5 @@ func init() {
 	// is called directly, e.g.:
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	// gitcloak.addLineToFile("/tmp/test.txt", "DEMO_LINE")
+	mfs.AddLineToFile("/tmp/test.txt", "DEMO_LINE")
 }
