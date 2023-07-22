@@ -55,17 +55,15 @@ func GetGitCloakBase() string {
 
 func gitCloakGitInit() {
 
-	dirPath := ""
-	if GITCLOAK_BASE == "" {
-		dirPath = GetGitCloakBase()
+	dirPath := GetGitCloakBase()
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		// Create the directory if it does not exist
+		if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
+			log.Fatal(err)
+		}
 	} else {
 		// Do nothing already initialized
 		return
-	}
-
-	// Create the directory if it does not exist
-	if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
-		log.Fatal(err)
 	}
 
 	cwd, err := os.Getwd()

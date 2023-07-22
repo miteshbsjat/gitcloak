@@ -76,5 +76,22 @@ func TestGitCloakInit(t *testing.T) {
 	gcdir := GetGitCloakBase()
 	os.Remove(gcdir)
 	gitCloakGitInit()
+	dirEntry, err := os.ReadDir(gcdir)
+	if err != nil {
+		t.Error(err)
+	}
+	defer os.Remove(gcdir)
+
+	dotGitPresent := false
+	for _, file := range dirEntry {
+		if file.Name() == ".git" {
+			dotGitPresent = true
+			break
+		}
+	}
+	if !dotGitPresent {
+		t.Errorf("%s/.git is not present", gcdir)
+	}
+
 	gitCloakGitInit()
 }
