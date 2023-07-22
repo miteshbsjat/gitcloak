@@ -3,8 +3,10 @@ package fs
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 )
 
 func AddLineToFile(filePath, lineToAdd string) error {
@@ -30,6 +32,18 @@ func AddLineToFile(filePath, lineToAdd string) error {
 	}
 
 	return nil
+}
+
+func FileGetBytes(filename string) ([]byte, error) {
+	return ioutil.ReadFile(filename) //#nosec G304
+}
+
+func FileGetString(filename string, timeout ...time.Duration) (string, error) {
+	bytes, err := FileGetBytes(filename)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }
 
 func AppendLineToFile(filePath, line string) error {
