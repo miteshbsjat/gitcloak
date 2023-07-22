@@ -3,7 +3,6 @@ package fs
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 	"time"
@@ -35,7 +34,7 @@ func AddLineToFile(filePath, lineToAdd string) error {
 }
 
 func FileGetBytes(filename string) ([]byte, error) {
-	return ioutil.ReadFile(filename) //#nosec G304
+	return os.ReadFile(filename) //#nosec G304
 }
 
 func FileGetString(filename string, timeout ...time.Duration) (string, error) {
