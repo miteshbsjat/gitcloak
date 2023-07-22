@@ -4,8 +4,10 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/manifoldco/promptui"
 	mfs "github.com/miteshbsjat/gitcloak/pkg/fs"
 
 	"github.com/spf13/cobra"
@@ -40,4 +42,73 @@ func init() {
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	mfs.AddLineToFile("/tmp/test.txt", "DEMO_LINE")
+	encAlgo, _ := getEncryptionAlgo()
+	fmt.Println(encAlgo)
+	// password, _ := getPassword()
+	// fmt.Println(password)
+	confirmInit()
+}
+
+// func initPrompt() {
+
+// }
+
+func getEncryptionAlgo() (string, error) {
+	prompt := promptui.Select{
+		Label: "Select Encryption Algorithm",
+		Items: []string{"aes", "chacha", "xxtea"},
+	}
+
+	_, result, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return "aes", err
+	}
+
+	fmt.Printf("You choose %q\n", result)
+	return result, nil
+}
+
+func getPassword() (string, error) {
+	validate := func(input string) error {
+		if len(input) < 16 {
+			return errors.New("encryption key must have more than 15 characters")
+		}
+		return nil
+	}
+
+	prompt := promptui.Prompt{
+		Label:    "Encryption Key",
+		Validate: validate,
+		Mask:     '*',
+	}
+
+	result, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return "", err
+	}
+
+	// fmt.Printf("Your password is %q\n", result)
+	return result, nil
+}
+
+func confirmInit() {
+	{
+		prompt := promptui.Prompt{
+			Label:     "Init Confirm",
+			IsConfirm: true,
+		}
+
+		result, err := prompt.Run()
+
+		if err != nil {
+			fmt.Printf("Prompt failed %v\n", err)
+			return
+		}
+
+		fmt.Printf("You choose %q\n", result)
+	}
 }
