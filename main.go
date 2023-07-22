@@ -1,6 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
+Copyright © 2023 Mitesh Jat <mitesh.singh.jat[at]gmail[dot]com>
 */
 package main
 

@@ -1,6 +1,5 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -13,13 +12,13 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Setup and initialize the gitcloak in current git repository.",
+	Long: `Setup and initialize the gitcloak in current git repository.
+* It creates .gitcloak/ directory.
+* Fixes .gitignore for gitcloak.
+* Creates .gitcloak/config.yaml based on arguments passed.
+* Creates commit-version:config-version map textfilekv store.
+* Initialize git repo in .gitcloak/ .`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("init called")
 	},
@@ -37,4 +36,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	// gitcloak.addLineToFile("/tmp/test.txt", "DEMO_LINE")
 }
