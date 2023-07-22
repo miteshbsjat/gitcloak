@@ -71,3 +71,10 @@ func TestYamlConfigDump(t *testing.T) {
 		t.Errorf("%s ! = %s", result, data)
 	}
 }
+
+func TestGitCloakInit(t *testing.T) {
+	gcdir := GetGitCloakBase()
+	os.Remove(gcdir)
+	gitCloakGitInit()
+	gitCloakGitInit()
+}
