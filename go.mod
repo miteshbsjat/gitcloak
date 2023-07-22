@@ -6,6 +6,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/spf13/cobra v1.7.0
 	github.com/yang3yen/xxtea-go v1.0.3
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

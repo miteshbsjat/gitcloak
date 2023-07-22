@@ -34,6 +34,23 @@ var initCmd = &cobra.Command{
 			CheckIfError(err)
 		}
 		fmt.Println(encAlgo)
+
+		encKey, err := cmd.Flags().GetString("key")
+		CheckIfError(err)
+		if encKey == "" {
+			encKey, err = getEncryptionKey()
+			CheckIfError(err)
+		}
+		fmt.Println(encKey)
+
+		regex, err := cmd.Flags().GetString("regex")
+		CheckIfError(err)
+		fmt.Println(regex)
+		if regex == "" {
+			path, err := cmd.Flags().GetString("path")
+			CheckIfError(err)
+			fmt.Println(path)
+		}
 	},
 }
 
@@ -52,15 +69,10 @@ func init() {
 	initCmd.Flags().StringP("encryption-algorithm", "e", "",
 		"Encryption Algorithm to select from "+strings.Join(encrypt.ENCRYPTION_ALGORITHMS, ", "))
 	initCmd.Flags().StringP("key", "k", "", "Encryption Key 16 characters")
-	initCmd.Flags().StringP("regex", "r", "", "Regex Pattern for files for encryption")
-	initCmd.Flags().StringP("path", "p", "", "Relative File path for encryption")
-
-	// mfs.AddLineToFile("/tmp/test.txt", "DEMO_LINE")
-	// encAlgo, _ := getEncryptionAlgo()
-	// fmt.Println(encAlgo)
-	// // password, _ := getPassword()
-	// // fmt.Println(password)
-	// confirmInit()
+	initCmd.Flags().StringP("path", "p", "",
+		"Relative File path for encryption; if -r is given then it is preferred.")
+	initCmd.Flags().StringP("regex", "r", "",
+		"Regex Pattern for files for encryption like: \"*secret.txt\"")
 }
 
 // func initPrompt() {
@@ -85,7 +97,7 @@ func getEncryptionAlgo() (string, error) {
 	return result, nil
 }
 
-func getPassword() (string, error) {
+func getEncryptionKey() (string, error) {
 	validate := func(input string) error {
 		if len(input) < 16 {
 			return errors.New("encryption key must have more than 15 characters")
