@@ -6,8 +6,10 @@ import (
 	"os"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	mgit "github.com/miteshbsjat/gitcloak/pkg/git"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
+	"gopkg.in/yaml.v3"
 )
 
 type GitCloakConfig struct {
@@ -53,7 +55,30 @@ func GetGitCloakBase() string {
 	return GITCLOAK_BASE
 }
 
-func gitCloakGitInit() {
+func GetGitCloakConfigPath() string {
+	return GetGitCloakBase() + "/config.yaml"
+}
+
+func (gcc *GitCloakConfig) CreateGitCloakConfig() (string, error) {
+	// Open the file for writing
+	fileName := GetGitCloakConfigPath()
+	file, err := os.Create(fileName)
+	if err != nil {
+		return fileName, err
+	}
+	defer file.Close()
+
+	// Create a YAML encoder
+	encoder := yaml.NewEncoder(file)
+
+	// Encode the struct into YAML and write it to the file
+	if err := encoder.Encode(&gcc); err != nil {
+		return fileName, err
+	}
+	return fileName, nil
+}
+
+func GitCloakGitInit() {
 
 	dirPath := GetGitCloakBase()
 	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
@@ -82,4 +107,45 @@ func gitCloakGitInit() {
 	}
 
 	fmt.Println("Git repository initialized successfully.")
+}
+
+func GitCloakGitCommit(commitMessage string) (commitHash string, err error) {
+	dirPath := GetGitCloakBase()
+
+	cwd, err := os.Getwd()
+	CheckIfError(err)
+	defer os.Chdir(cwd)
+
+	// git commit with the given message
+	repo, err := git.PlainOpen(dirPath)
+	if err != nil {
+		return "", err
+	}
+
+	wt, err := repo.Worktree()
+	if err != nil {
+		return "", err
+	}
+
+	// Add all changes to the repository
+	_, err = wt.Add(".")
+	if err != nil {
+		return "", err
+	}
+
+	// Commit the changes
+	commit, err := wt.Commit(commitMessage, &git.CommitOptions{
+		Author: &object.Signature{
+			Name:  "Mitesh Singh Jat",
+			Email: fmt.Sprintf("%s@example.com", "mitesh"),
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+
+	// Print the commit hash
+	// fmt.Println("Commit Hash:", commit)
+	commitHash = commit.String()
+	return commitHash, nil
 }

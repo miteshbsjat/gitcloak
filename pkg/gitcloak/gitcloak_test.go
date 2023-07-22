@@ -75,7 +75,7 @@ func TestYamlConfigDump(t *testing.T) {
 func TestGitCloakInit(t *testing.T) {
 	gcdir := GetGitCloakBase()
 	os.Remove(gcdir)
-	gitCloakGitInit()
+	GitCloakGitInit()
 	dirEntry, err := os.ReadDir(gcdir)
 	if err != nil {
 		t.Error(err)
@@ -93,5 +93,5 @@ func TestGitCloakInit(t *testing.T) {
 		t.Errorf("%s/.git is not present", gcdir)
 	}
 
-	gitCloakGitInit()
+	GitCloakGitInit()
 }

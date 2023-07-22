@@ -10,6 +10,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	"github.com/miteshbsjat/gitcloak/pkg/encrypt"
+	"github.com/miteshbsjat/gitcloak/pkg/gitcloak"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 
 	"github.com/spf13/cobra"
@@ -46,11 +47,27 @@ var initCmd = &cobra.Command{
 		regex, err := cmd.Flags().GetString("regex")
 		CheckIfError(err)
 		fmt.Println(regex)
+		path := ""
 		if regex == "" {
 			path, err := cmd.Flags().GetString("path")
 			CheckIfError(err)
 			fmt.Println(path)
 		}
+
+		// Create gitcloak
+		gitcloak.GitCloakGitInit()
+		gitCloakConfig := gitcloak.GitCloakConfig{
+			EncryptionAlgorithm: encAlgo,
+			EncryptionKey:       encKey,
+			Path:                path,
+			Regex:               regex,
+		}
+		_, err = gitCloakConfig.CreateGitCloakConfig()
+		CheckIfError(err)
+		// commit config file
+		commitHash, err := gitcloak.GitCloakGitCommit("Initial Commit GitCloak")
+		fmt.Println(commitHash)
+
 	},
 }
 
