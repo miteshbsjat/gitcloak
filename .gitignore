@@ -6,7 +6,7 @@
 *.dylib
 
 # Test binary, built with `go test -c`
-*.test
+# *.test
 *.tmp
 .env
 
@@ -25,8 +25,8 @@ bin/
 *.im
 
 # gitcloak
-gitc
-gitcloak
+# gitc
+# gitcloak
 .gitc
 .gitcloak
 main
