@@ -8,7 +8,7 @@ import (
 	"fmt"
 
 	"github.com/manifoldco/promptui"
-	mfs "github.com/miteshbsjat/gitcloak/pkg/fs"
+	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -25,6 +25,13 @@ var initCmd = &cobra.Command{
 * Initialize git repo in .gitcloak/ .`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("init called")
+		encAlgo, err := cmd.Flags().GetString("encryption-algorithm")
+		CheckIfError(err)
+		if encAlgo == "" {
+			encAlgo, err = getEncryptionAlgo()
+			CheckIfError(err)
+		}
+		fmt.Println(encAlgo)
 	},
 }
 
@@ -40,13 +47,17 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	initCmd.Flags().StringP("encryption-algorithm", "e", "", "Encryption Algorithm to select")
+	initCmd.Flags().StringP("key", "k", "", "Encryption Key 16 characters")
+	initCmd.Flags().StringP("regex", "r", "", "Regex Pattern for files for encryption")
+	initCmd.Flags().StringP("path", "p", "", "Relative File path for encryption")
 
-	mfs.AddLineToFile("/tmp/test.txt", "DEMO_LINE")
-	encAlgo, _ := getEncryptionAlgo()
-	fmt.Println(encAlgo)
-	// password, _ := getPassword()
-	// fmt.Println(password)
-	confirmInit()
+	// mfs.AddLineToFile("/tmp/test.txt", "DEMO_LINE")
+	// encAlgo, _ := getEncryptionAlgo()
+	// fmt.Println(encAlgo)
+	// // password, _ := getPassword()
+	// // fmt.Println(password)
+	// confirmInit()
 }
 
 // func initPrompt() {
