@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -138,6 +139,7 @@ func GitCloakGitCommit(commitMessage string) (commitHash string, err error) {
 		Author: &object.Signature{
 			Name:  "Mitesh Singh Jat",
 			Email: fmt.Sprintf("%s@example.com", "mitesh"),
+			When:  time.Now(),
 		},
 	})
 	if err != nil {

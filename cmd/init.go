@@ -34,7 +34,7 @@ var initCmd = &cobra.Command{
 			encAlgo, err = getEncryptionAlgo()
 			CheckIfError(err)
 		}
-		fmt.Println(encAlgo)
+		// fmt.Println(encAlgo)
 
 		encKey, err := cmd.Flags().GetString("key")
 		CheckIfError(err)
@@ -42,16 +42,17 @@ var initCmd = &cobra.Command{
 			encKey, err = getEncryptionKey()
 			CheckIfError(err)
 		}
-		fmt.Println(encKey)
+		// fmt.Println(encKey)
 
 		regex, err := cmd.Flags().GetString("regex")
 		CheckIfError(err)
-		fmt.Println(regex)
+		// fmt.Println(regex)
 		path := ""
 		if regex == "" {
-			path, err := cmd.Flags().GetString("path")
+			path1, err := cmd.Flags().GetString("path")
 			CheckIfError(err)
-			fmt.Println(path)
+			path = path1
+			// fmt.Println(path)
 		}
 
 		// Create gitcloak
@@ -66,6 +67,7 @@ var initCmd = &cobra.Command{
 		CheckIfError(err)
 		// commit config file
 		commitHash, err := gitcloak.GitCloakGitCommit("Initial Commit GitCloak")
+		CheckIfError(err)
 		fmt.Println(commitHash)
 
 	},
