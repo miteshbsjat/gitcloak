@@ -7,6 +7,8 @@ import (
 	"github.com/yang3yen/xxtea-go/xxtea"
 )
 
+var ENCRYPTION_ALGORITHMS []string = []string{"aes", "chacha", "xxtea"}
+
 func Encrypt(line []byte, line_num int, encryptionAlgo string, key []byte) (string, error) {
 	var encs []byte = nil
 	// salt := []byte(strconv.Itoa(line_num % len(key)))

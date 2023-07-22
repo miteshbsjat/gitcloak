@@ -6,8 +6,10 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/manifoldco/promptui"
+	"github.com/miteshbsjat/gitcloak/pkg/encrypt"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 
 	"github.com/spf13/cobra"
@@ -47,7 +49,8 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	initCmd.Flags().StringP("encryption-algorithm", "e", "", "Encryption Algorithm to select")
+	initCmd.Flags().StringP("encryption-algorithm", "e", "",
+		"Encryption Algorithm to select from "+strings.Join(encrypt.ENCRYPTION_ALGORITHMS, ", "))
 	initCmd.Flags().StringP("key", "k", "", "Encryption Key 16 characters")
 	initCmd.Flags().StringP("regex", "r", "", "Regex Pattern for files for encryption")
 	initCmd.Flags().StringP("path", "p", "", "Relative File path for encryption")
@@ -67,7 +70,8 @@ func init() {
 func getEncryptionAlgo() (string, error) {
 	prompt := promptui.Select{
 		Label: "Select Encryption Algorithm",
-		Items: []string{"aes", "chacha", "xxtea"},
+		// Items: []string{"aes", "chacha", "xxtea"},
+		Items: encrypt.ENCRYPTION_ALGORITHMS,
 	}
 
 	_, result, err := prompt.Run()
