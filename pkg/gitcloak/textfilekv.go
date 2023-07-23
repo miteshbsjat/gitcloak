@@ -1,17 +1,18 @@
 package gitcloak
 
 import (
+	"sync"
+
 	tkv "github.com/miteshbsjat/textfilekv"
 )
 
-var tkvInitialized bool
+var tkvInitialized sync.Once
 var tkvObj *tkv.KeyValueStore
 
 func initTextFileKV() {
-	if !tkvInitialized {
-		tkvInitialized = true
+	tkvInitialized.Do(func() {
 		tkvObj = tkv.NewKeyValueStore(GetGitCloakBase() + "/ggcmap.txt")
-	}
+	})
 }
 
 func GetTextFileKV() *tkv.KeyValueStore {

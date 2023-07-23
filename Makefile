@@ -21,3 +21,8 @@ run:
 
 install:
 	go install -v ./...
+
+clean:
+	rm -rf .gitcloak
+	rm -f bin/*
+
