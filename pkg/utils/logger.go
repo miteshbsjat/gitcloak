@@ -52,8 +52,8 @@ func trimLeftToMax(str string, max int) string {
 // logWithCallerInfo adds file line number and function name to the log message.
 func logWithCallerInfo(depth int, format string, args ...interface{}) {
 	_, file, line, _ := runtime.Caller(depth)
-	funcName := trimLeftToMax(getCurrentFuncName(depth), 15)
-	file = trimLeftToMax(file, 20)
+	funcName := trimLeftToMax(getCurrentFuncName(depth), 20)
+	file = trimLeftToMax(file, 25)
 
 	msg := fmt.Sprintf(format, args...)
 	msgWithCallerInfo := fmt.Sprintf("%s:%d %s - %s", file, line, funcName, msg)

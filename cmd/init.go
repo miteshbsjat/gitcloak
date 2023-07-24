@@ -29,7 +29,7 @@ var initCmd = &cobra.Command{
 * Creates commit-version:config-version map textfilekv store.
 * Initialize git repo in .gitcloak/ .`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("init called")
+		Info("gitcloak init started")
 		encAlgo, err := cmd.Flags().GetString("encryption-algorithm")
 		CheckIfError(err)
 		if encAlgo == "" {
@@ -65,18 +65,19 @@ var initCmd = &cobra.Command{
 		// commit config file
 		gcCommitHash, err := gitcloak.GitCloakGitCommit("gitcloak init commit")
 		CheckIfError(err)
-		fmt.Println(gcCommitHash)
+		Info("gitcloak Commit Hash = %s", gcCommitHash)
 		pwd, err := os.Getwd()
 		CheckIfError(err)
 		gCommitHash, err := git.GetGitCommitHash(pwd)
 		CheckIfError(err)
-		fmt.Println(gCommitHash)
+		Info("git Commit Hash = %s", gCommitHash)
 		gckv, err := gitcloak.NewKVStore("ggcmap")
 		CheckIfError(err)
 		err = gckv.Set(gCommitHash, gcCommitHash)
 		CheckIfError(err)
 		_, err = gitcloak.GitCloakGitCommit("gitcloak init mapped commit hashes")
 		CheckIfError(err)
+		Info("gitcloak init completed with %s algorithm", encAlgo)
 	},
 }
 
