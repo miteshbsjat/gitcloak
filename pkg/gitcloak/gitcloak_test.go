@@ -9,10 +9,19 @@ import (
 
 func TestYamlConfigDump(t *testing.T) {
 
+	encr := Encryption{
+		Algorithm: "aes",
+		Key:       "abc",
+	}
+
+	rule := Rule{
+		Name:       "initrule",
+		Encryption: encr,
+		Regex:      "abc.txt",
+	}
+	rules := []Rule{rule}
 	gcc := GitCloakConfig{
-		EncryptionAlgorithm: "aes",
-		EncryptionKey:       "abc",
-		Regex:               "*abc.txt",
+		Rules: rules,
 	}
 
 	// Open the file for writing
@@ -50,23 +59,23 @@ func TestYamlConfigDump(t *testing.T) {
 		t.Error(err)
 	}
 
-	var data string = gcc.EncryptionAlgorithm
-	result := gcc1.EncryptionAlgorithm
+	var data string = gcc.Rules[0].Encryption.Algorithm
+	result := gcc1.Rules[0].Encryption.Algorithm
 	if result != data {
 		t.Errorf("%s ! = %s", result, data)
 	}
-	data = gcc.EncryptionKey
-	result = gcc1.EncryptionKey
+	data = gcc.Rules[0].Encryption.Key
+	result = gcc1.Rules[0].Encryption.Key
 	if result != data {
 		t.Errorf("%s ! = %s", result, data)
 	}
-	data = gcc.Path
-	result = gcc1.Path
+	data = gcc.Rules[0].Path
+	result = gcc1.Rules[0].Path
 	if result != data {
 		t.Errorf("%s ! = %s", result, data)
 	}
-	data = gcc.Regex
-	result = gcc1.Regex
+	data = gcc.Rules[0].Regex
+	result = gcc1.Rules[0].Regex
 	if result != data {
 		t.Errorf("%s ! = %s", result, data)
 	}

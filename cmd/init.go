@@ -59,12 +59,7 @@ var initCmd = &cobra.Command{
 
 		// Create gitcloak
 		gitcloak.GitCloakGitInit()
-		gitCloakConfig := gitcloak.GitCloakConfig{
-			EncryptionAlgorithm: encAlgo,
-			EncryptionKey:       encKey,
-			Path:                path,
-			Regex:               regex,
-		}
+		gitCloakConfig := gitcloak.NewGitCloakConfig("gcinit", encAlgo, encKey, regex, path)
 		_, err = gitCloakConfig.CreateGitCloakConfig()
 		CheckIfError(err)
 		// commit config file
@@ -76,7 +71,6 @@ var initCmd = &cobra.Command{
 		gCommitHash, err := git.GetGitCommitHash(pwd)
 		CheckIfError(err)
 		fmt.Println(gCommitHash)
-		// gitcloak.PutGitAndGitCloak(gCommitHash, gcCommitHash)
 		gckv, err := gitcloak.NewKVStore("ggcmap")
 		CheckIfError(err)
 		err = gckv.Set(gCommitHash, gcCommitHash)

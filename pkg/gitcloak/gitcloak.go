@@ -13,11 +13,52 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// type GitCloakConfig struct {
+// 	EncryptionAlgorithm string `yaml:"encryption_algorithm"`
+// 	EncryptionKey       string `yaml:"encryption_key"`
+// 	Path                string `yaml:"path,omitempty"`
+// 	Regex               string `yaml:"path_regex,omitempty"`
+// }
+
+type Encryption struct {
+	Algorithm string `yaml:"algorithm"`
+	Key       string `yaml:"key"`
+	IV        string `yaml:"iv,omitempty"`
+}
+
+type Rule struct {
+	Name       string     `yaml:"name"`
+	Encryption Encryption `yaml:"encryption"`
+	Path       string     `yaml:"path,omitempty"`
+	Regex      string     `yaml:"path_regex,omitempty"`
+}
+
 type GitCloakConfig struct {
-	EncryptionAlgorithm string `yaml:"encryption_algorithm"`
-	EncryptionKey       string `yaml:"encryption_key"`
-	Path                string `yaml:"path,omitempty"`
-	Regex               string `yaml:"path_regex,omitempty"`
+	Rules []Rule `yaml:"rules"`
+}
+
+func NewRule(name, encrAlgo, encrKey, regex, path string) *Rule {
+	encr := Encryption{
+		Algorithm: encrAlgo,
+		Key:       encrKey,
+	}
+
+	rule := Rule{
+		Name:       name,
+		Encryption: encr,
+		Regex:      regex,
+		Path:       path,
+	}
+	return &rule
+}
+
+func NewGitCloakConfig(name, encrAlgo, encrKey, regex, path string) *GitCloakConfig {
+	rule := NewRule(name, encrAlgo, encrKey, regex, path)
+	rules := []Rule{*rule}
+	gcc := GitCloakConfig{
+		Rules: rules,
+	}
+	return &gcc
 }
 
 func gitInit() (*git.Repository, error) {
