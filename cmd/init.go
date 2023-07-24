@@ -76,7 +76,11 @@ var initCmd = &cobra.Command{
 		gCommitHash, err := git.GetGitCommitHash(pwd)
 		CheckIfError(err)
 		fmt.Println(gCommitHash)
-		gitcloak.PutGitAndGitCloak(gCommitHash, gcCommitHash)
+		// gitcloak.PutGitAndGitCloak(gCommitHash, gcCommitHash)
+		gckv, err := gitcloak.NewKVStore("ggcmap")
+		CheckIfError(err)
+		err = gckv.Set(gCommitHash, gcCommitHash)
+		CheckIfError(err)
 		_, err = gitcloak.GitCloakGitCommit("gitcloak init mapped commit hashes")
 		CheckIfError(err)
 	},
