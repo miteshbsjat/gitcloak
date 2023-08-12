@@ -40,19 +40,20 @@ func TestEncryptionAES(t *testing.T) {
 	encFile := plainFile + ".enc"
 	passwd := []byte("passwordpassword")
 	encFunc := encryptionFuncMap["aes"]
-	err := EncryptFileLineByLine(plainFile, encFunc, passwd)
+	err := EncryptFileLineByLine(plainFile, encFile, encFunc, passwd, 108)
 	if err != nil {
 		t.Error(err)
 	}
+	decFile := encFile + ".dec"
 	decFunc := decryptionFuncMap["aes"]
-	err = DecryptFileLineByLine(encFile, decFunc, passwd)
+	err = DecryptFileLineByLine(encFile, decFile, decFunc, passwd)
 	if err != nil {
 		t.Error(err)
 	}
 
-	decFile := encFile + ".dec"
 	output, _ := goshell.RunCommand("head -1 " + decFile)
 	if output != "Hello World" {
 		t.Errorf("First line after decryption does not match")
 	}
+	t.Errorf("failing ...")
 }

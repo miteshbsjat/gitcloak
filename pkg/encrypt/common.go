@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/sha256"
 	"fmt"
+	"math/rand"
 	"os"
 	"sort"
 
@@ -12,9 +13,13 @@ import (
 )
 
 // Package for common encryption functions
+type encryptParams struct {
+	key     []byte
+	randInt int
+}
 
 // Define a map to map the encryption function names to the actual functions
-var encryptionFuncMap = map[string]func([]byte, []byte) (string, error){
+var encryptionFuncMap = map[string]func(encryptParams, []byte) (string, error){
 	"xxtea": EncryptAES,
 	"aes":   EncryptAES,
 	// Add entries for other algorithms (e.g., "chacha" and "xxtea") if needed
@@ -24,6 +29,21 @@ var decryptionFuncMap = map[string]func([]byte, string) ([]byte, error){
 	// Add entries for other algorithms (e.g., "chacha" and "xxtea") if needed
 }
 var ENCRYPTION_ALGORITHMS []string
+
+func NewEncryptParams(key []byte, randInt int) *encryptParams {
+	ep := encryptParams{
+		key:     key,
+		randInt: randInt,
+	}
+	return &ep
+}
+func NewEncryptParamsDefRandInt(key []byte) *encryptParams {
+	ep := encryptParams{
+		key:     key,
+		randInt: 0,
+	}
+	return &ep
+}
 
 func init() {
 	initENCDECAlgosVar()
@@ -56,7 +76,7 @@ func generateIV(line []byte, randomNumber int) ([]byte, error) {
 	return iv, nil
 }
 
-func EncryptFileLineByLine(filepath string, encryptionFunc func([]byte, []byte) (string, error), key []byte) error {
+func EncryptFileLineByLine(filepath string, encryptedFilePath string, encryptionFunc func(encryptParams, []byte) (string, error), key []byte, seed int) error {
 	file, err := os.Open(filepath)
 	if err != nil {
 		return err
@@ -65,20 +85,20 @@ func EncryptFileLineByLine(filepath string, encryptionFunc func([]byte, []byte) 
 
 	scanner := bufio.NewScanner(file)
 
-	encryptedFilePath := filepath + ".enc"
 	encryptedFile, err := os.Create(encryptedFilePath)
 	if err != nil {
 		return err
 	}
 	defer encryptedFile.Close()
 
+	// Initialize the random number generator with the seed and current time
+	rng := rand.New(rand.NewSource(int64(seed)))
+
 	for scanner.Scan() {
 		line := scanner.Bytes()
-		fmt.Printf("%v", string(line))
-		// lineCopy := make([]byte, len(line))
-		// copy(lineCopy, line)
-
-		encryptedLine, err := encryptionFunc(key, line)
+		// fmt.Printf("%v", string(line))
+		encParams := NewEncryptParams(key, rng.Intn(10000))
+		encryptedLine, err := encryptionFunc(*encParams, line)
 		if err != nil {
 			return err
 		}
@@ -91,7 +111,7 @@ func EncryptFileLineByLine(filepath string, encryptionFunc func([]byte, []byte) 
 
 	return nil
 }
-func DecryptFileLineByLine(filepath string, decryptionFunc func([]byte, string) ([]byte, error), key []byte) error {
+func DecryptFileLineByLine(filepath string, decryptedFilePath string, decryptionFunc func([]byte, string) ([]byte, error), key []byte) error {
 	file, err := os.Open(filepath)
 	if err != nil {
 		return err
@@ -100,7 +120,6 @@ func DecryptFileLineByLine(filepath string, decryptionFunc func([]byte, string) 
 
 	scanner := bufio.NewScanner(file)
 
-	decryptedFilePath := filepath + ".dec"
 	decryptedFile, err := os.Create(decryptedFilePath)
 	if err != nil {
 		return err

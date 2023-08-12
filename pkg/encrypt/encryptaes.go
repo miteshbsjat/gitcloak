@@ -7,12 +7,11 @@ import (
 	// "crypto/rand"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	// "io"
 )
 
-func EncryptAES(key []byte, data []byte) (string, error) {
-	fmt.Println(data)
+func EncryptAES(encParams encryptParams, data []byte) (string, error) {
+	key := encParams.key
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err
@@ -26,7 +25,7 @@ func EncryptAES(key []byte, data []byte) (string, error) {
 	// 	return "", err
 	// }
 	copy(ciphertext, data)
-	ivg, _ := generateIV(ciphertext, 4567)
+	ivg, _ := generateIV(ciphertext, encParams.randInt)
 	for i := 0; i < aes.BlockSize; i++ {
 		iv[i] = ivg[i]
 	}
@@ -36,7 +35,6 @@ func EncryptAES(key []byte, data []byte) (string, error) {
 
 	// Encode the ciphertext in Base64 before returning
 	encodedCiphertext := base64.StdEncoding.EncodeToString(ciphertext)
-	fmt.Println(encodedCiphertext)
 
 	return encodedCiphertext, nil
 }
