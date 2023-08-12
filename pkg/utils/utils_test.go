@@ -11,3 +11,10 @@ func TestErrorExit(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestLineBreak(t *testing.T) {
+	lineBreak := LineBreak()
+	if lineBreak != "\n" {
+		t.Errorf("Line Break is not \\n")
+	}
+}

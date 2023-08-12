@@ -35,3 +35,12 @@ func Infop(format string, args ...interface{}) {
 func Warningp(format string, args ...interface{}) {
 	fmt.Printf("\x1b[36;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
 }
+
+func LineBreak() string {
+	var ps = string(os.PathSeparator)
+	var lineBreak = "\n"
+	if ps != "/" {
+		lineBreak = "\r\n"
+	}
+	return lineBreak
+}
