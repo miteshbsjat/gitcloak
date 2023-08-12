@@ -37,6 +37,9 @@ func NewEncryptParams(key []byte, randInt int) *encryptParams {
 	}
 	return &ep
 }
+
+var SEED_DEFAULT = 0
+
 func NewEncryptParamsDefRandInt(key []byte) *encryptParams {
 	ep := encryptParams{
 		key:     key,
@@ -53,7 +56,6 @@ func initENCDECAlgosVar() {
 	ENCRYPTION_ALGORITHMS = make([]string, 0, len(encryptionFuncMap))
 	for encFuncName := range encryptionFuncMap {
 		ENCRYPTION_ALGORITHMS = append(ENCRYPTION_ALGORITHMS, encFuncName)
-		fmt.Println(encFuncName)
 	}
 	sort.Strings(ENCRYPTION_ALGORITHMS)
 }
@@ -91,7 +93,7 @@ func EncryptFileLineByLine(filepath string, encryptedFilePath string, encryption
 	}
 	defer encryptedFile.Close()
 
-	// Initialize the random number generator with the seed and current time
+	// Initialize the random number generator with the seed
 	rng := rand.New(rand.NewSource(int64(seed)))
 
 	for scanner.Scan() {
@@ -111,6 +113,7 @@ func EncryptFileLineByLine(filepath string, encryptedFilePath string, encryption
 
 	return nil
 }
+
 func DecryptFileLineByLine(filepath string, decryptedFilePath string, decryptionFunc func([]byte, string) ([]byte, error), key []byte) error {
 	file, err := os.Open(filepath)
 	if err != nil {

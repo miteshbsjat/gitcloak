@@ -40,7 +40,7 @@ func TestEncryptionAES(t *testing.T) {
 	encFile := plainFile + ".enc"
 	passwd := []byte("passwordpassword")
 	encFunc := encryptionFuncMap["aes"]
-	err := EncryptFileLineByLine(plainFile, encFile, encFunc, passwd, 108)
+	err := EncryptFileLineByLine(plainFile, encFile, encFunc, passwd, SEED_DEFAULT)
 	if err != nil {
 		t.Error(err)
 	}
@@ -55,5 +55,5 @@ func TestEncryptionAES(t *testing.T) {
 	if output != "Hello World" {
 		t.Errorf("First line after decryption does not match")
 	}
-	t.Errorf("failing ...")
+	// t.Errorf("failing ...")
 }
