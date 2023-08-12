@@ -20,12 +20,13 @@ type encryptParams struct {
 
 // Define a map to map the encryption function names to the actual functions
 var encryptionFuncMap = map[string]func(encryptParams, []byte) (string, error){
-	"xxtea": EncryptAES,
+	"xxtea": EncryptXXTEA,
 	"aes":   EncryptAES,
 	// Add entries for other algorithms (e.g., "chacha" and "xxtea") if needed
 }
 var decryptionFuncMap = map[string]func([]byte, string) ([]byte, error){
-	"aes": DecryptAES,
+	"xxtea": DecryptXXTEA,
+	"aes":   DecryptAES,
 	// Add entries for other algorithms (e.g., "chacha" and "xxtea") if needed
 }
 var ENCRYPTION_ALGORITHMS []string

@@ -56,4 +56,37 @@ func TestEncryptionAES(t *testing.T) {
 		t.Errorf("First line after decryption does not match")
 	}
 	// t.Errorf("failing ...")
+	goshell.RunCommand("rm -f " + plainFile + " " + encFile + " " + decFile)
+}
+
+func TestEncryptionXXTEA(t *testing.T) {
+
+	plainFile := "/tmp/testencxt.txt"
+	_, _ = goshell.RunCommand("echo Hello World > " + plainFile)
+	_, _ = goshell.RunCommand("echo '1' >> " + plainFile)
+	_, _ = goshell.RunCommand("echo '1' >> " + plainFile)
+	_, _ = goshell.RunCommand("echo Hello World >> " + plainFile)
+	_, _ = goshell.RunCommand("echo '1' >> " + plainFile)
+	_, _ = goshell.RunCommand("echo Hello World >> " + plainFile)
+
+	encFile := plainFile + ".enc"
+	passwd := []byte("passwordpassword")
+	encFunc := encryptionFuncMap["xxtea"]
+	err := EncryptFileLineByLine(plainFile, encFile, encFunc, passwd, SEED_DEFAULT)
+	if err != nil {
+		t.Error(err)
+	}
+	decFile := encFile + ".dec"
+	decFunc := decryptionFuncMap["xxtea"]
+	err = DecryptFileLineByLine(encFile, decFile, decFunc, passwd)
+	if err != nil {
+		t.Error(err)
+	}
+
+	output, _ := goshell.RunCommand("head -1 " + decFile)
+	if output != "Hello World" {
+		t.Errorf("First line after decryption does not match")
+	}
+	// t.Errorf("failing ...")
+	goshell.RunCommand("rm -f " + plainFile + " " + encFile + " " + decFile)
 }
