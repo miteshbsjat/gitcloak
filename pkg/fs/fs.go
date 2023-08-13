@@ -3,6 +3,7 @@ package fs
 import (
 	"bufio"
 	"fmt"
+	"hash/fnv"
 	"os"
 	"strings"
 	"time"
@@ -58,4 +59,15 @@ func AppendLineToFile(filePath, line string) error {
 	}
 
 	return nil
+}
+
+// Generate unique seed int64 from given filepath
+func GetFilePathId(filePath, basePath string) int64 {
+	// Remove the common base path from the file path
+	relativePath := strings.TrimPrefix(filePath, basePath)
+
+	// Calculate a hash of the relative path using FNV-1a
+	hash := fnv.New64a()
+	hash.Write([]byte(relativePath))
+	return int64(hash.Sum64())
 }

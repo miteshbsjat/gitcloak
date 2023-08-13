@@ -40,7 +40,7 @@ func TestEncryptionAES(t *testing.T) {
 	encFile := plainFile + ".enc"
 	passwd := []byte("passwordpassword")
 	encFunc := encryptionFuncMap["aes"]
-	err := EncryptFileLineByLine(plainFile, encFile, encFunc, passwd, SEED_DEFAULT)
+	err := EncryptFileLineByLine(plainFile, encFile, encFunc, passwd, SEED_DEFAULT, false)
 	if err != nil {
 		t.Error(err)
 	}
@@ -72,7 +72,7 @@ func TestEncryptionXXTEA(t *testing.T) {
 	encFile := plainFile + ".enc"
 	passwd := []byte("passwordpassword")
 	encFunc := encryptionFuncMap["xxtea"]
-	err := EncryptFileLineByLine(plainFile, encFile, encFunc, passwd, SEED_DEFAULT)
+	err := EncryptFileLineByLine(plainFile, encFile, encFunc, passwd, SEED_DEFAULT, true)
 	if err != nil {
 		t.Error(err)
 	}

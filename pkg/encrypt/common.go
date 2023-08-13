@@ -5,10 +5,11 @@ import (
 	"crypto/aes"
 	"crypto/sha256"
 	"fmt"
-	"math/rand"
 	"os"
 	"sort"
 
+	"github.com/miteshbsjat/gitcloak/pkg/fs"
+	"github.com/miteshbsjat/gitcloak/pkg/gitcloak"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 )
 
@@ -39,7 +40,7 @@ func NewEncryptParams(key []byte, randInt int) *encryptParams {
 	return &ep
 }
 
-var SEED_DEFAULT = 0
+var SEED_DEFAULT = int64(0)
 
 func NewEncryptParamsDefRandInt(key []byte) *encryptParams {
 	ep := encryptParams{
@@ -79,7 +80,7 @@ func generateIV(line []byte, randomNumber int) ([]byte, error) {
 	return iv, nil
 }
 
-func EncryptFileLineByLine(filepath string, encryptedFilePath string, encryptionFunc func(encryptParams, []byte) (string, error), key []byte, seed int) error {
+func EncryptFileLineByLine(filepath string, encryptedFilePath string, encryptionFunc func(encryptParams, []byte) (string, error), key []byte, seed int64, perLineRandom bool) error {
 	file, err := os.Open(filepath)
 	if err != nil {
 		return err
@@ -95,12 +96,15 @@ func EncryptFileLineByLine(filepath string, encryptedFilePath string, encryption
 	defer encryptedFile.Close()
 
 	// Initialize the random number generator with the seed
-	rng := rand.New(rand.NewSource(int64(seed)))
+	rng := getRandomNumberGenerator(seed ^ (fs.GetFilePathId(filepath, gitcloak.GITCLOAK_BASE)))
+	encParams := NewEncryptParams(key, rng.Intn(10000))
 
 	for scanner.Scan() {
 		line := scanner.Bytes()
 		// fmt.Printf("%v", string(line))
-		encParams := NewEncryptParams(key, rng.Intn(10000))
+		if perLineRandom {
+			encParams = NewEncryptParams(key, rng.Intn(10000))
+		}
 		encryptedLine, err := encryptionFunc(*encParams, line)
 		if err != nil {
 			return err
@@ -137,8 +141,6 @@ func DecryptFileLineByLine(filepath string, decryptedFilePath string, decryption
 		if err != nil {
 			return err
 		}
-		// fmt.Println(decryptedLine)
-		// decryptedLine = appen([]byte("\n"))
 
 		_, err = decryptedFile.Write(decryptedLine)
 		if err != nil {

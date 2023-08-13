@@ -46,3 +46,15 @@ func TestAppendLineToFile(t *testing.T) {
 		t.Errorf("%s != %s\n", str, data)
 	}
 }
+
+func TestGetFilePathId(t *testing.T) {
+	basePath := "/home/user/files/"
+	filePath := "/home/user/files/documents/report.txt"
+	uniqueId := GetFilePathId(filePath, basePath)
+	basePath = "/home/user/"
+	filePath = "/home/user/documents/report.txt"
+	uniqueId2 := GetFilePathId(filePath, basePath)
+	if uniqueId != uniqueId2 {
+		t.Errorf("Unique ID: %v != %v", uniqueId, uniqueId2)
+	}
+}
