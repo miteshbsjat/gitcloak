@@ -75,7 +75,8 @@ func GetFilePathId(filePath, basePath string) int64 {
 	return int64(hash.Sum64())
 }
 
-func FindMatchingFiles(rootDir string, regex *regexp.Regexp, fileChannel chan<- string, wg *sync.WaitGroup) {
+// func findMatchingFiles(rootDir string, regex *regexp.Regexp, fileChannel chan<- string, errorChannel chan<- error, wg *sync.WaitGroup) {
+func FindMatchingFiles(rootDir string, regex *regexp.Regexp, fileChannel chan<- string, errorChannel chan<- error, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	err := filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
@@ -91,10 +92,11 @@ func FindMatchingFiles(rootDir string, regex *regexp.Regexp, fileChannel chan<- 
 
 	if err != nil {
 		fmt.Println("Error:", err)
+		errorChannel <- err
 	}
 }
 
-func ProcessFiles(fileChannel <-chan string, done chan<- bool) {
+func ProcessFiles(fileChannel <-chan string, errorChannel chan<- error, done chan<- bool) {
 	for filename := range fileChannel {
 		fmt.Println("Filename:", filename)
 	}

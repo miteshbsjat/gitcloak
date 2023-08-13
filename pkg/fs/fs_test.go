@@ -78,17 +78,25 @@ func TestTraversalProcessing(t *testing.T) {
 	}
 
 	fileChannel := make(chan string, 10)
+	errorChannel := make(chan error)
 	done := make(chan bool)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	go FindMatchingFiles(rootDir, regex, fileChannel, &wg)
-	go ProcessFiles(fileChannel, done)
+	go FindMatchingFiles(rootDir, regex, fileChannel, errorChannel, &wg)
+	go ProcessFiles(fileChannel, errorChannel, done)
 
 	wg.Wait()
 	close(fileChannel)
 
 	<-done
-	// t.Errorf("All filenames displayed.")
+
+	// Non-blocking getting message from channel
+	select {
+	case err := <-errorChannel:
+		t.Errorf("received error %v", err)
+	default:
+		t.Log("No error")
+	}
 }
