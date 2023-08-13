@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"hash/fnv"
 	"os"
+	"path/filepath"
+	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -70,4 +73,31 @@ func GetFilePathId(filePath, basePath string) int64 {
 	hash := fnv.New64a()
 	hash.Write([]byte(relativePath))
 	return int64(hash.Sum64())
+}
+
+func FindMatchingFiles(rootDir string, regex *regexp.Regexp, fileChannel chan<- string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	err := filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && regex.MatchString(path) {
+			fileChannel <- path
+		}
+		return nil
+	})
+
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+}
+
+func ProcessFiles(fileChannel <-chan string, done chan<- bool) {
+	for filename := range fileChannel {
+		fmt.Println("Filename:", filename)
+	}
+
+	done <- true
 }
