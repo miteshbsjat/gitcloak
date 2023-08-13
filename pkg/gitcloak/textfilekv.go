@@ -40,7 +40,7 @@ func NewKVStore(file string) (*tkv.KeyValueStore, error) {
 		}
 		kvStoreCache.cache[file] = kvs
 		return kvs, nil
-	case "filedata":
+	case "filestate":
 		kvs, err := tkv.NewKeyValueStore(filePath)
 		if err != nil {
 			return nil, err

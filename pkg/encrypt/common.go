@@ -120,13 +120,30 @@ func EncryptFileLineByLine(filepath string, encryptedFilePath string, encryption
 }
 
 func EncryptFiles(fileChannel <-chan string, errorChannel chan<- error, done chan<- bool, encryptionFunc func(encryptParams, []byte) (string, error), key []byte, seed int64, perLineRandom bool) {
+	tkv, err := gitcloak.NewKVStore("filestate")
+	if err != nil {
+		Warn("Error: %v", err)
+		errorChannel <- err
+	}
+
 	for filename := range fileChannel {
+		state, present := tkv.Get(gitcloak.TrimGitBasePath(filename))
+		if present && state == "encrypted" {
+			Info("Encrypted already : %s", filename)
+			continue
+		}
 		Info("Encrypting File: %v", filename)
 		err := EncryptFileLineByLine(filename, fs.EncryptedFilePattern(filename), encryptionFunc, key, seed, perLineRandom)
 		if err != nil {
 			Warn("Error: %v", err)
 			errorChannel <- err
 		}
+		err = os.Rename(fs.EncryptedFilePattern(filename), filename)
+		if err != nil {
+			Warn("Error: %v", err)
+			errorChannel <- err
+		}
+		tkv.Set(gitcloak.TrimGitBasePath(filename), "encrypted")
 	}
 
 	done <- true
@@ -169,13 +186,29 @@ func DecryptFileLineByLine(filepath string, decryptedFilePath string, decryption
 }
 
 func DecryptFiles(fileChannel <-chan string, errorChannel chan<- error, done chan<- bool, decryptionFunc func([]byte, string) ([]byte, error), key []byte) {
+	tkv, err := gitcloak.NewKVStore("filestate")
+	if err != nil {
+		Warn("Error: %v", err)
+		errorChannel <- err
+	}
 	for filename := range fileChannel {
+		state, present := tkv.Get(gitcloak.TrimGitBasePath(filename))
+		if present && state == "decrypted" {
+			Info("Decrypted already : %s", filename)
+			continue
+		}
 		Info("Decrypting File: %v", filename)
-		err := DecryptFileLineByLine(filename, fs.DecryptedFileName(filename), decryptionFunc, key)
+		err := DecryptFileLineByLine(filename, fs.DecryptedFilePattern(filename), decryptionFunc, key)
 		if err != nil {
 			Warn("Error: %v", err)
 			errorChannel <- err
 		}
+		err = os.Rename(fs.DecryptedFilePattern(filename), filename)
+		if err != nil {
+			Warn("Error: %v", err)
+			errorChannel <- err
+		}
+		tkv.Set(gitcloak.TrimGitBasePath(filename), "decrypted")
 	}
 
 	done <- true

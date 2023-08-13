@@ -87,10 +87,18 @@ func RegexFromPattern(regexPattern string) (*regexp.Regexp, error) {
 }
 
 var ENCRYPTED_FILE_EXT = ".ecry"
+var DECRYPTED_FILE_EXT = ".dcry"
 
 func EncryptedFilePattern(normalFilePattern string) string {
 	if !strings.HasSuffix(normalFilePattern, ENCRYPTED_FILE_EXT) {
 		return normalFilePattern + ENCRYPTED_FILE_EXT
+	}
+	return normalFilePattern
+}
+
+func DecryptedFilePattern(normalFilePattern string) string {
+	if !strings.HasSuffix(normalFilePattern, DECRYPTED_FILE_EXT) {
+		return normalFilePattern + DECRYPTED_FILE_EXT
 	}
 	return normalFilePattern
 }
@@ -130,4 +138,11 @@ func ProcessFiles(fileChannel <-chan string, errorChannel chan<- error, done cha
 	}
 
 	done <- true
+}
+
+func RemovePathPrefix(filepath, prefix string) string {
+	if strings.HasPrefix(filepath, prefix) {
+		return strings.TrimPrefix(filepath, prefix)
+	}
+	return filepath
 }
