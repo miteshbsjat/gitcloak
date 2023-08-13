@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 )
 
 func AddLineToFile(filePath, lineToAdd string) error {
@@ -75,12 +77,36 @@ func GetFilePathId(filePath, basePath string) int64 {
 	return int64(hash.Sum64())
 }
 
+func RegexFromPattern(regexPattern string) (*regexp.Regexp, error) {
+	regex, err := regexp.Compile(regexPattern)
+	if err != nil {
+		Warn("Invalid regex pattern: %v", err)
+		return nil, err
+	}
+	return regex, nil
+}
+
+var ENCRYPTED_FILE_EXT = ".ecry"
+
+func EncryptedFilePattern(normalFilePattern string) string {
+	return normalFilePattern + ENCRYPTED_FILE_EXT
+}
+
+// removes .ecry from encrypted file name given
+func DecryptedFileName(encryptedFileName string) string {
+	if strings.HasSuffix(encryptedFileName, ENCRYPTED_FILE_EXT) {
+		return encryptedFileName[:len(encryptedFileName)-len(ENCRYPTED_FILE_EXT)]
+	}
+	return encryptedFileName
+}
+
 // func findMatchingFiles(rootDir string, regex *regexp.Regexp, fileChannel chan<- string, errorChannel chan<- error, wg *sync.WaitGroup) {
 func FindMatchingFiles(rootDir string, regex *regexp.Regexp, fileChannel chan<- string, errorChannel chan<- error, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	err := filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
+			Warn("Error: %v", err)
 			return err
 		}
 
@@ -91,7 +117,6 @@ func FindMatchingFiles(rootDir string, regex *regexp.Regexp, fileChannel chan<- 
 	})
 
 	if err != nil {
-		fmt.Println("Error:", err)
 		errorChannel <- err
 	}
 }

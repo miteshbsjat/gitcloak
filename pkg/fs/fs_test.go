@@ -2,7 +2,6 @@ package fs
 
 import (
 	"os"
-	"regexp"
 	"strings"
 	"sync"
 	"testing"
@@ -71,10 +70,22 @@ func TestTraversalProcessing(t *testing.T) {
 	// regexPattern := `.*_test.go$`
 	regexPattern := `.*/pkg/enc.*/.*_test.go`
 
-	regex, err := regexp.Compile(regexPattern)
+	regex, err := RegexFromPattern(regexPattern)
 	if err != nil {
 		t.Errorf("Invalid regex pattern: %v", err)
 		return
+	}
+
+	encRegexPattern := EncryptedFilePattern(regexPattern)
+	if encRegexPattern != regexPattern+ENCRYPTED_FILE_EXT {
+		t.Errorf("regexPattern %v != %v", regexPattern, encRegexPattern)
+	}
+
+	decFile := "test.txt"
+	encFile := EncryptedFilePattern(decFile)
+	normalFile := DecryptedFileName(encFile)
+	if normalFile != decFile {
+		t.Errorf("decFile %v != %v", decFile, normalFile)
 	}
 
 	fileChannel := make(chan string, 10)
