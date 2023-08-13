@@ -2,8 +2,11 @@ package encrypt
 
 import (
 	"encoding/base64"
+	"sync"
 	"testing"
 
+	"github.com/miteshbsjat/gitcloak/pkg/fs"
+	"github.com/miteshbsjat/gitcloak/pkg/gitcloak"
 	"github.com/miteshbsjat/goshell"
 )
 
@@ -89,4 +92,41 @@ func TestEncryptionXXTEA(t *testing.T) {
 	}
 	// t.Errorf("failing ...")
 	goshell.RunCommand("rm -f " + plainFile + " " + encFile + " " + decFile)
+}
+
+func TestTraversalEncryption(t *testing.T) {
+	rootDir := gitcloak.GetGitCloakBase() + "/.."
+	// regexPattern := `.*_test.go$`
+	regexPattern := `.*/testencrypt/.*mitesh.*.txt`
+
+	regex, err := fs.RegexFromPattern(regexPattern)
+	if err != nil {
+		t.Errorf("Invalid regex pattern: %v", err)
+		return
+	}
+
+	fileChannel := make(chan string, 10)
+	errorChannel := make(chan error)
+	done := make(chan bool)
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go fs.FindMatchingFiles(rootDir, regex, fileChannel, errorChannel, &wg)
+	encFunc := encryptionFuncMap["aes"]
+	key := []byte("passwordpassword")
+	go EncryptFiles(fileChannel, errorChannel, done, encFunc, key, 1234, false)
+
+	wg.Wait()
+	close(fileChannel)
+
+	<-done
+
+	// Non-blocking getting message from channel
+	select {
+	case err := <-errorChannel:
+		t.Errorf("received error %v", err)
+	default:
+		t.Log("No error")
+	}
 }

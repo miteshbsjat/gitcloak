@@ -119,6 +119,19 @@ func EncryptFileLineByLine(filepath string, encryptedFilePath string, encryption
 	return nil
 }
 
+func EncryptFiles(fileChannel <-chan string, errorChannel chan<- error, done chan<- bool, encryptionFunc func(encryptParams, []byte) (string, error), key []byte, seed int64, perLineRandom bool) {
+	for filename := range fileChannel {
+		fmt.Println("Filename:", filename)
+		err := EncryptFileLineByLine(filename, fs.EncryptedFilePattern(filename), encryptionFunc, key, seed, perLineRandom)
+		if err != nil {
+			Warn("Error: %v", err)
+			errorChannel <- err
+		}
+	}
+
+	done <- true
+}
+
 func DecryptFileLineByLine(filepath string, decryptedFilePath string, decryptionFunc func([]byte, string) ([]byte, error), key []byte) error {
 	file, err := os.Open(filepath)
 	if err != nil {
