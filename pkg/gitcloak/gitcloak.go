@@ -23,12 +23,13 @@ import (
 type Encryption struct {
 	Algorithm string `yaml:"algorithm"`
 	Key       string `yaml:"key"`
-	IV        string `yaml:"iv,omitempty"`
+	Seed      int64  `yaml:"seed"`
 }
 
 type Rule struct {
 	Name       string     `yaml:"name"`
 	Encryption Encryption `yaml:"encryption"`
+	LineRandom bool       `yaml:"line_random,omitempty"`
 	Path       string     `yaml:"path,omitempty"`
 	Regex      string     `yaml:"path_regex,omitempty"`
 }
@@ -37,23 +38,25 @@ type GitCloakConfig struct {
 	Rules []Rule `yaml:"rules"`
 }
 
-func NewRule(name, encrAlgo, encrKey, regex, path string) *Rule {
+func NewRule(name, encrAlgo, encrKey string, encrSeed int64, regex, path string, lineRandom bool) *Rule {
 	encr := Encryption{
 		Algorithm: encrAlgo,
 		Key:       encrKey,
+		Seed:      encrSeed,
 	}
 
 	rule := Rule{
 		Name:       name,
 		Encryption: encr,
+		LineRandom: lineRandom,
 		Regex:      regex,
 		Path:       path,
 	}
 	return &rule
 }
 
-func NewGitCloakConfig(name, encrAlgo, encrKey, regex, path string) *GitCloakConfig {
-	rule := NewRule(name, encrAlgo, encrKey, regex, path)
+func NewGitCloakConfig(name, encrAlgo, encrKey string, encrSeed int64, regex, path string, lineRandom bool) *GitCloakConfig {
+	rule := NewRule(name, encrAlgo, encrKey, encrSeed, regex, path, lineRandom)
 	rules := []Rule{*rule}
 	gcc := GitCloakConfig{
 		Rules: rules,
