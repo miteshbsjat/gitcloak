@@ -89,7 +89,10 @@ func RegexFromPattern(regexPattern string) (*regexp.Regexp, error) {
 var ENCRYPTED_FILE_EXT = ".ecry"
 
 func EncryptedFilePattern(normalFilePattern string) string {
-	return normalFilePattern + ENCRYPTED_FILE_EXT
+	if !strings.HasSuffix(normalFilePattern, ENCRYPTED_FILE_EXT) {
+		return normalFilePattern + ENCRYPTED_FILE_EXT
+	}
+	return normalFilePattern
 }
 
 // removes .ecry from encrypted file name given

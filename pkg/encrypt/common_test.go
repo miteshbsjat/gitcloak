@@ -97,7 +97,7 @@ func TestEncryptionXXTEA(t *testing.T) {
 func TestTraversalEncryption(t *testing.T) {
 	rootDir := gitcloak.GetGitCloakBase() + "/.."
 	// regexPattern := `.*_test.go$`
-	regexPattern := `.*/testencrypt/.*mitesh.*.txt`
+	regexPattern := `.*/testencrypt/.*mitesh.*.txt$`
 
 	regex, err := fs.RegexFromPattern(regexPattern)
 	if err != nil {
@@ -129,4 +129,43 @@ func TestTraversalEncryption(t *testing.T) {
 	default:
 		t.Log("No error")
 	}
+}
+
+func TestTraversalDecryption(t *testing.T) {
+	rootDir := gitcloak.GetGitCloakBase() + "/.."
+	// regexPattern := `.*_test.go$`
+	regexPattern := `.*/testencrypt/.*mitesh.*.txt` + fs.ENCRYPTED_FILE_EXT + "$"
+
+	regex, err := fs.RegexFromPattern(regexPattern)
+	if err != nil {
+		t.Errorf("Invalid regex pattern: %v", err)
+		return
+	}
+
+	fileChannel := make(chan string, 10)
+	errorChannel := make(chan error)
+	done := make(chan bool)
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go fs.FindMatchingFiles(rootDir, regex, fileChannel, errorChannel, &wg)
+	decFunc := decryptionFuncMap["aes"]
+	key := []byte("passwordpassword")
+	// goshell.RunCommand("sleep 1")
+	go DecryptFiles(fileChannel, errorChannel, done, decFunc, key)
+
+	wg.Wait()
+	close(fileChannel)
+
+	<-done
+
+	// Non-blocking getting message from channel
+	select {
+	case err := <-errorChannel:
+		t.Errorf("received error %v", err)
+	default:
+		t.Log("No error")
+	}
+	// t.Errorf(regexPattern)
 }
