@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/miteshbsjat/gitcloak/pkg/fs"
 )
 
 var gitBaseDir string = ""
@@ -53,4 +54,9 @@ func GetGitCommitHash(repoPath string) (string, error) {
 
 	hash := ref.Hash()
 	return hash.String(), nil
+}
+
+func TrimGitBasePath(filepath string) string {
+	gitbase, _ := GetGitBaseDir()
+	return fs.RemovePathPrefix(filepath, gitbase)
 }

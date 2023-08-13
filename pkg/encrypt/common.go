@@ -9,6 +9,7 @@ import (
 	"sort"
 
 	"github.com/miteshbsjat/gitcloak/pkg/fs"
+	"github.com/miteshbsjat/gitcloak/pkg/git"
 	"github.com/miteshbsjat/gitcloak/pkg/gitcloak"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 )
@@ -127,7 +128,7 @@ func EncryptFiles(fileChannel <-chan string, errorChannel chan<- error, done cha
 	}
 
 	for filename := range fileChannel {
-		state, present := tkv.Get(gitcloak.TrimGitBasePath(filename))
+		state, present := tkv.Get(git.TrimGitBasePath(filename))
 		if present && state == "encrypted" {
 			Info("Encrypted already : %s", filename)
 			continue
@@ -143,7 +144,7 @@ func EncryptFiles(fileChannel <-chan string, errorChannel chan<- error, done cha
 			Warn("Error: %v", err)
 			errorChannel <- err
 		}
-		tkv.Set(gitcloak.TrimGitBasePath(filename), "encrypted")
+		tkv.Set(git.TrimGitBasePath(filename), "encrypted")
 	}
 
 	done <- true
@@ -192,7 +193,7 @@ func DecryptFiles(fileChannel <-chan string, errorChannel chan<- error, done cha
 		errorChannel <- err
 	}
 	for filename := range fileChannel {
-		state, present := tkv.Get(gitcloak.TrimGitBasePath(filename))
+		state, present := tkv.Get(git.TrimGitBasePath(filename))
 		if present && state == "decrypted" {
 			Info("Decrypted already : %s", filename)
 			continue
@@ -208,7 +209,7 @@ func DecryptFiles(fileChannel <-chan string, errorChannel chan<- error, done cha
 			Warn("Error: %v", err)
 			errorChannel <- err
 		}
-		tkv.Set(gitcloak.TrimGitBasePath(filename), "decrypted")
+		tkv.Set(git.TrimGitBasePath(filename), "decrypted")
 	}
 
 	done <- true

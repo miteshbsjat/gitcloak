@@ -8,7 +8,6 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/miteshbsjat/gitcloak/pkg/fs"
 	mgit "github.com/miteshbsjat/gitcloak/pkg/git"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 	"gopkg.in/yaml.v3"
@@ -195,9 +194,4 @@ func GitCloakGitCommit(commitMessage string) (commitHash string, err error) {
 	// fmt.Println("Commit Hash:", commit)
 	commitHash = commit.String()
 	return commitHash, nil
-}
-
-func TrimGitBasePath(filepath string) string {
-	gitbase, _ := mgit.GetGitBaseDir()
-	return fs.RemovePathPrefix(filepath, gitbase)
 }
