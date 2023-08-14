@@ -195,3 +195,19 @@ func GitCloakGitCommit(commitMessage string) (commitHash string, err error) {
 	commitHash = commit.String()
 	return commitHash, nil
 }
+
+// for gitcloak encrypt -----------------------
+func ReadGitCloakConfig(fileName string) (*GitCloakConfig, error) {
+	data, err := os.ReadFile(fileName)
+	if err != nil {
+		Warn("Error: %v", err)
+		return nil, err
+	}
+	var gcc GitCloakConfig
+	err = yaml.Unmarshal(data, &gcc)
+	if err != nil {
+		Warn("Error: %v", err)
+		return nil, err
+	}
+	return &gcc, nil
+}

@@ -193,20 +193,20 @@ func getEncryptionSeed() (int64, error) {
 	return seed, nil
 }
 
-func confirmInit() {
-	{
-		prompt := promptui.Prompt{
-			Label:     "Init Confirm",
-			IsConfirm: true,
-		}
+// func confirmInit() {
+// 	{
+// 		prompt := promptui.Prompt{
+// 			Label:     "Init Confirm",
+// 			IsConfirm: true,
+// 		}
 
-		result, err := prompt.Run()
+// 		result, err := prompt.Run()
 
-		if err != nil {
-			fmt.Printf("Prompt failed %v\n", err)
-			return
-		}
+// 		if err != nil {
+// 			fmt.Printf("Prompt failed %v\n", err)
+// 			return
+// 		}
 
-		fmt.Printf("You choose %q\n", result)
-	}
-}
+// 		fmt.Printf("You choose %q\n", result)
+// 	}
+// }

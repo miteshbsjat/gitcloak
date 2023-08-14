@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"sync"
 
 	"github.com/miteshbsjat/gitcloak/pkg/fs"
 	"github.com/miteshbsjat/gitcloak/pkg/git"
@@ -213,4 +214,53 @@ func DecryptFiles(fileChannel <-chan string, errorChannel chan<- error, done cha
 	}
 
 	done <- true
+}
+
+func ProcessRuleForEncryption(rule gitcloak.Rule) error {
+	rootDir, err := git.GetGitBaseDir()
+	if err != nil {
+		Warn("Error: %v", err)
+		return err
+	}
+	// regexPattern := `.*_test.go$`
+	regexPattern := rule.Regex
+	if regexPattern == "" {
+		regexPattern = string(os.PathSeparator) + rule.Path + "$"
+	}
+
+	regex, err := fs.RegexFromPattern(regexPattern)
+	if err != nil {
+		Warn("Error: %v", err)
+		return err
+	}
+
+	fileChannel := make(chan string, 10)
+	errorChannel := make(chan error)
+	done := make(chan bool)
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go fs.FindMatchingFiles(rootDir, regex, fileChannel, errorChannel, &wg)
+	encFunc := encryptionFuncMap[rule.Encryption.Algorithm]
+	key := []byte(rule.Encryption.Key)
+	go EncryptFiles(fileChannel, errorChannel, done, encFunc, key, rule.Encryption.Seed, rule.LineRandom)
+
+	wg.Wait()
+	close(fileChannel)
+
+	<-done
+
+	// Non-blocking getting message from channel
+	select {
+	case err := <-errorChannel:
+		Warn("received error %v", err)
+		if err != nil {
+			Warn("Error: %v", err)
+			return err
+		}
+	default:
+		Info("No error")
+	}
+	return nil
 }

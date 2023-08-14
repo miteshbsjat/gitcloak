@@ -4,6 +4,8 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/miteshbsjat/gitcloak/pkg/encrypt"
+	"github.com/miteshbsjat/gitcloak/pkg/gitcloak"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 	"github.com/spf13/cobra"
 )
@@ -17,6 +19,19 @@ var encryptCmd = &cobra.Command{
 * All set of files given in rules will be encrypted`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Info("gitcloak encrypt started")
+
+		gitcloakConfigFile, err := cmd.Flags().GetString("configuration")
+		CheckIfError(err)
+		// Read the given configuration file into struct
+		gcc, err := gitcloak.ReadGitCloakConfig(gitcloakConfigFile)
+		CheckIfError(err)
+
+		// Loop through each given rules
+		for ruleId := range gcc.Rules {
+			Info("Processing Rule : %d", ruleId)
+			err := encrypt.ProcessRuleForEncryption(gcc.Rules[ruleId])
+			CheckIfError(err)
+		}
 	},
 }
 
@@ -32,4 +47,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// encryptCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	encryptCmd.Flags().StringP("configuration", "c",
+		gitcloak.GetGitCloakConfigPath(), "gitcloak config file")
 }
