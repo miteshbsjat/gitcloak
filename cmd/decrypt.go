@@ -1,12 +1,12 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/miteshbsjat/gitcloak/pkg/encrypt"
+	"github.com/miteshbsjat/gitcloak/pkg/gitcloak"
+	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,21 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("decrypt called")
+		Info("gitcloak encrypt started")
+
+		gitcloakConfigFile, err := cmd.Flags().GetString("configuration")
+		CheckIfError(err)
+		// Read the given configuration file into struct
+		gcc, err := gitcloak.ReadGitCloakConfig(gitcloakConfigFile)
+		CheckIfError(err)
+
+		// Loop through each given rules
+		for ruleId := range gcc.Rules {
+			Info("Processing Rule : %d", ruleId)
+			err := encrypt.ProcessRuleForDecryption(gcc.Rules[ruleId])
+			CheckIfError(err)
+		}
+
 	},
 }
 
@@ -37,4 +51,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// decryptCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	decryptCmd.Flags().StringP("configuration", "c",
+		gitcloak.GetGitCloakConfigPath(), "gitcloak config file")
+
 }

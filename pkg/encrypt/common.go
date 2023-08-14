@@ -264,3 +264,52 @@ func ProcessRuleForEncryption(rule gitcloak.Rule) error {
 	}
 	return nil
 }
+
+func ProcessRuleForDecryption(rule gitcloak.Rule) error {
+	rootDir, err := git.GetGitBaseDir()
+	if err != nil {
+		Warn("Error: %v", err)
+		return err
+	}
+	// regexPattern := `.*_test.go$`
+	regexPattern := rule.Regex
+	if regexPattern == "" {
+		regexPattern = string(os.PathSeparator) + rule.Path + "$"
+	}
+
+	regex, err := fs.RegexFromPattern(regexPattern)
+	if err != nil {
+		Warn("Error: %v", err)
+		return err
+	}
+
+	fileChannel := make(chan string, 10)
+	errorChannel := make(chan error)
+	done := make(chan bool)
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go fs.FindMatchingFiles(rootDir, regex, fileChannel, errorChannel, &wg)
+	decFunc := decryptionFuncMap[rule.Encryption.Algorithm]
+	key := []byte(rule.Encryption.Key)
+	go DecryptFiles(fileChannel, errorChannel, done, decFunc, key)
+
+	wg.Wait()
+	close(fileChannel)
+
+	<-done
+
+	// Non-blocking getting message from channel
+	select {
+	case err := <-errorChannel:
+		Warn("received error %v", err)
+		if err != nil {
+			Warn("Error: %v", err)
+			return err
+		}
+	default:
+		Info("No error")
+	}
+	return nil
+}
