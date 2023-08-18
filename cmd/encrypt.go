@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 Mitesh Singh Jat <mitesh.singh.jat@gmail.com>
 */
 package cmd
 
