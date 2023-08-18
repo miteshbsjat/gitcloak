@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/manifoldco/promptui"
+	"github.com/miteshbsjat/gitcloak/pkg/encrypt"
 	"github.com/miteshbsjat/gitcloak/pkg/git"
 	"github.com/miteshbsjat/gitcloak/pkg/gitcloak"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
@@ -29,22 +30,19 @@ var commitCmd = &cobra.Command{
 			CheckIfError(err)
 		}
 
-		// commit config file
-		gcCommitHash, err := gitcloak.GitCloakGitCommit("gitcloak commit " + commitMessage)
+		gitcloakConfigFile := gitcloak.GetGitCloakConfigPath()
+		// Read the given configuration file into struct
+		gcc, err := gitcloak.ReadGitCloakConfig(gitcloakConfigFile)
 		CheckIfError(err)
-		Info("gitcloak Commit Hash = %s", gcCommitHash)
-		pwd, err := os.Getwd()
-		CheckIfError(err)
-		gCommitHash, err := git.GetGitCommitHash(pwd)
-		CheckIfError(err)
-		Info("git Commit Hash = %s", gCommitHash)
-		gckv, err := gitcloak.NewKVStore("ggcmap")
-		CheckIfError(err)
-		err = gckv.Set(gCommitHash, gcCommitHash)
-		CheckIfError(err)
-		_, err = gitcloak.GitCloakGitCommit("gitcloak commit mapped commit hashes")
-		CheckIfError(err)
-		Info("gitcloak commit completed with %s message", commitMessage)
+
+		// Loop through each given rules
+		for ruleId := range gcc.Rules {
+			Info("Processing Rule : %d", ruleId)
+			err := encrypt.ProcessRuleForEncryption(gcc.Rules[ruleId])
+			CheckIfError(err)
+		}
+
+		gitcloakCommit(commitMessage)
 	},
 }
 
@@ -84,4 +82,22 @@ func getCommitMessage() (string, error) {
 	}
 
 	return result, nil
+}
+
+func gitcloakCommit(commitMessage string) {
+	gcCommitHash, err := gitcloak.GitCloakGitCommit("gitcloak commit " + commitMessage)
+	CheckIfError(err)
+	Info("gitcloak Commit Hash = %s", gcCommitHash)
+	pwd, err := os.Getwd()
+	CheckIfError(err)
+	gCommitHash, err := git.GetGitCommitHash(pwd)
+	CheckIfError(err)
+	Info("git Commit Hash = %s", gCommitHash)
+	gckv, err := gitcloak.NewKVStore("ggcmap")
+	CheckIfError(err)
+	err = gckv.Set(gCommitHash, gcCommitHash)
+	CheckIfError(err)
+	_, err = gitcloak.GitCloakGitCommit("gitcloak commit mapped commit hashes")
+	CheckIfError(err)
+	Info("gitcloak commit completed with %s message", commitMessage)
 }
