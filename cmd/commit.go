@@ -66,7 +66,7 @@ func init() {
 func getCommitMessage() (string, error) {
 	validate := func(input string) error {
 		if len(input) < 10 {
-			return errors.New("Commit Message should have more than 10 characters")
+			return errors.New("commit message should have more than 10 characters")
 		}
 		return nil
 	}
