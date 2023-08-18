@@ -12,6 +12,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	"github.com/miteshbsjat/gitcloak/pkg/encrypt"
+	"github.com/miteshbsjat/gitcloak/pkg/fs"
 	"github.com/miteshbsjat/gitcloak/pkg/git"
 	"github.com/miteshbsjat/gitcloak/pkg/gitcloak"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
@@ -88,6 +89,11 @@ var initCmd = &cobra.Command{
 		CheckIfError(err)
 		_, err = gitcloak.GitCloakGitCommit("gitcloak init mapped commit hashes")
 		CheckIfError(err)
+
+		// Add .gitcloak in .gitignore
+		gitBase, err := git.GetGitBaseDir()
+		CheckIfError(err)
+		fs.AddLineToFile(gitBase+"/.gitignore", ".gitcloak")
 		Info("gitcloak init completed with %s algorithm", encAlgo)
 	},
 }
