@@ -13,13 +13,10 @@ import (
 // decryptCmd represents the decrypt command
 var decryptCmd = &cobra.Command{
 	Use:   "decrypt",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Decrypt the files/files-regex given in .gitcloak/config.yaml",
+	Long: `Decrypts the files/files-regex given in .gitcloak/config.yaml
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+* All set of files given in rules will be encrypted`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Info("gitcloak encrypt started")
 
