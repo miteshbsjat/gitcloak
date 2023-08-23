@@ -116,10 +116,10 @@ make install
 
 ## Acknowledgement
 
-I would like to dedicate this package to my Friends Venkatesh Pitta 
-and Puneet Vyas, without their inspiration and support, this would not be possible. 
-Also, I would like to thank God, my Teachers, my Parents, my Wife and Daughter 
+I would like to thank God, my Teachers, my Parents, my Wife and Daughter 
 to stand with me all the times.
+I would like to dedicate this tool to my Friends Venkatesh Pitta, Nilesh Deshmukh,  
+Tara and Puneet Vyas, without their inspiration and support, this would not be possible. 
 
 ## Contributing
 
