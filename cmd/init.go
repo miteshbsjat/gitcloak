@@ -243,7 +243,7 @@ func createGitCommitHook() error {
 		"  exit 1",
 		"fi",
 		"",
-		"gitcloak commit",
+		"gitcloak commit -m \"git pre-commit hook called\"",
 		"exit $?",
 		"",
 	}
