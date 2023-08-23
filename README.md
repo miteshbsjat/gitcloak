@@ -7,7 +7,7 @@
 ## Introduction
 
 `gitcloak` will help to securely place secretive or confidential information in 
-git.
+git. `gitcloak` is a `git` plugin created using `golang` and `git`.
 
 ## Features
 
