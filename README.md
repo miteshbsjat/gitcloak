@@ -1,6 +1,6 @@
 # gitcloak
 
-`gitcloak` **ALPHA release** : Cloak (security) for selected files on Git. 
+`gitcloak` **BETA release** : Cloak (security) for selected files on Git. 
 
 ![gitcloak](images/gitcloak0.png "gitcloak")
 
@@ -28,7 +28,7 @@ git.
 ## ToDo
 
 The following things are remaining to be built, most of these will be available in `BETA` release.
-* `git commit hook` to be injected, so that `gitcloak commit` will be always run before the actual git commit. This will ensure that all the required files are encrypted before getting committed.
+* `git commit hook` to be injected, so that `gitcloak encrypt` will be always run before the actual git commit. This will ensure that all the required files are encrypted before getting committed. **Done**
 * `git reset` should also rollback `.gitcloak/config.yaml` so the decryption `git decrypt` should work well [*Time Travel*].
 * Make Installable on MacOSX, *BSD, Windows OS
 
