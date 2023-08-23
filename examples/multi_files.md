@@ -1,4 +1,4 @@
-# Simple gitcloak Initialization and Encrypting Single File
+# gitcloak Initialization and Encrypting Multiple Files
 
 In this example, multiple files (wildcard `demo*.txt`) matching regex `demo.*.txt$` in are encrypted using `gitcloak`.
 
