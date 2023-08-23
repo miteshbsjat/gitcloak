@@ -25,4 +25,5 @@ install:
 clean:
 	rm -rf .gitcloak
 	rm -f bin/*
+	rm -f .git/hooks/pre-commit
 
