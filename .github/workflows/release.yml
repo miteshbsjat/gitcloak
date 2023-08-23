@@ -30,7 +30,7 @@ jobs:
       # - name: Run unit tests
       #   run: make test
 
-      - name: Build textfilekv-cli Binaries
+      - name: Build gitcloak Binaries
         run: |
           make build-cross
           make dist checksum VERSION="${{ github.ref_name }}"
