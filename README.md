@@ -9,6 +9,18 @@
 `gitcloak` will help to securely place secretive or confidential information in 
 git. `gitcloak` is a `git` plugin created using `golang` and `git`.
 
+
+## Table of Contents
+
+- [Features](#features)
+- [ToDo](#todo)
+- [Installation](#installation)
+  - [Mac OSX M1/M2](#mac-osx-m1m2)
+  - [Linux](#linux)
+- [Examples](#examples)
+
+----
+
 ## Features
 
 `gitcloak` allows to get most features of git like:-
@@ -28,18 +40,74 @@ git. `gitcloak` is a `git` plugin created using `golang` and `git`.
 ## ToDo
 
 The following things are remaining to be built, most of these will be available in `BETA` release.
-* `git commit hook` to be injected, so that `gitcloak encrypt` will be always run before the actual git commit. This will ensure that all the required files are encrypted before getting committed. **Done**
 * `git reset` should also rollback `.gitcloak/config.yaml` so the decryption `git decrypt` should work well [*Time Travel*].
-* Make Installable on MacOSX, *BSD, Windows OS
+* `git commit hook` to be injected, so that `gitcloak encrypt` will be always run before the actual git commit. This will ensure that all the required files are encrypted before getting committed. **Done**
+* Make Installable on MacOSX, *BSD, Windows OS **Done**
+
+----
 
 ## Installation
 
+### Binaries from Release
+* Download binaries from [Releases](https://github.com/miteshbsjat/gitcloak/releases)
+
+#### Mac OSX M1/M2
+* Download binaries from [Releases](https://github.com/miteshbsjat/gitcloak/releases), e.g. [gitcloak v0.3.1 Darwin ARM64](https://github.com/miteshbsjat/gitcloak/releases/download/v0.3.1/gitcloak-v0.3.1-darwin-arm64.tar.gz)
+```bash
+cd /tmp
+wget https://github.com/miteshbsjat/gitcloak/releases/download/v0.3.1/gitcloak-v0.3.1-darwin-arm64.tar.gz
+```
+
+* Extract the archive
+```bash
+tar -zxvf gitcloak-v0.3.1-darwin-arm64.tar.gz
+```
+
+* Install the binary in a directory in your `$PATH`
+```bash
+sudo install -s darwin-arm64/gitcloak /opt/homebrew/bin
+```
+
+* Verify the installation
+```bash
+$ which gitcloak
+/opt/homebrew/bin/gitcloak
+```
+
+
+#### Linux
+* Download binaries from [Releases](https://github.com/miteshbsjat/gitcloak/releases), e.g. [gitcloak v0.3.1 Linux AMD64](https://github.com/miteshbsjat/gitcloak/releases/download/v0.3.1/gitcloak-v0.3.1-linux-amd64.tar.gz)
+```bash
+cd /tmp
+wget https://github.com/miteshbsjat/gitcloak/releases/download/v0.3.1/gitcloak-v0.3.1-linux-amd64.tar.gz
+```
+
+* Extract the archive
+```bash
+tar -zxvf gitcloak-v0.3.1-linux-amd64.tar.gz
+```
+
+* Install the binary in a directory in your `$PATH`
+```bash
+install -s linux-amd64/gitcloak ~/bin/
+```
+
+* Verify the installation
+```bash
+$ which gitcloak
+/home/mitesh/bin/gitcloak
+```
+
+
+### GoLang Based
 * Currently, testing on Linux only, hence, installation on Linux can be done as given below:-
 ```
 make build
 make install
 ```
 * Assuming `go` is installed.
+
+----
 
 ## Examples
 
