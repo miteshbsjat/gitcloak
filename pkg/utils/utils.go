@@ -16,14 +16,13 @@ func CheckIfError(err error) {
 }
 
 // Return False if Error
-func CheckIfError2(err error, format string, args ...interface{}) bool {
+func CheckIfError2(err error, format string, args ...interface{}) {
 	if err == nil {
-		return false
+		return
 	}
 	Error3(format, args)
 	Error3("\x1b[31;1m%s\x1b[0m\n", err)
-	// os.Exit(0)
-	return true
+	os.Exit(1)
 }
 
 // Info should be used to describe the example commands that are about to run.

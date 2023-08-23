@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/miteshbsjat/gitcloak/pkg/utils"
 	. "github.com/miteshbsjat/gitcloak/pkg/utils"
 )
 
@@ -140,9 +141,30 @@ func ProcessFiles(fileChannel <-chan string, errorChannel chan<- error, done cha
 	done <- true
 }
 
+// Remove the given prefix path from given filepath
 func RemovePathPrefix(filepath, prefix string) string {
 	if strings.HasPrefix(filepath, prefix) {
 		return strings.TrimPrefix(filepath, prefix)
 	}
 	return filepath
+}
+
+// Create Shell Script from given list of lines
+func CreateShellScript(scriptPath string, lines []string) error {
+	scriptContent := strings.Join(lines, utils.LineBreak())
+
+	// You can modify the directory path where you want to create the script.
+
+	// Write the script content to the script file.
+	err := os.WriteFile(scriptPath, []byte(scriptContent), 0755)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func IsPresent(filePath string) bool {
+	_, err := os.Stat(filePath)
+	return err == nil
 }

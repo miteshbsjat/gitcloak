@@ -68,6 +68,9 @@ var initCmd = &cobra.Command{
 			path = path1
 			// fmt.Println(path)
 		}
+		// Create the git commit hook script
+		err = createGitCommitHook()
+		CheckIfError2(err, "Failed to create git pre-commit hook %v", "")
 
 		// Create gitcloak
 		gitcloak.GitCloakGitInit()
@@ -94,6 +97,7 @@ var initCmd = &cobra.Command{
 		gitBase, err := git.GetGitBaseDir()
 		CheckIfError(err)
 		fs.AddLineToFile(gitBase+"/.gitignore", ".gitcloak")
+
 		Info("gitcloak init completed with %s algorithm", encAlgo)
 	},
 }
@@ -216,3 +220,44 @@ func getEncryptionSeed() (int64, error) {
 // 		fmt.Printf("You choose %q\n", result)
 // 	}
 // }
+
+func createGitCommitHook() error {
+	scriptPath, err := git.GetGitBaseDir()
+	if err != nil {
+		Warn("Error in getting git base dir in current dir")
+		return err
+	}
+	scriptPath = scriptPath + "/.git/hooks/pre-commit"
+
+	scriptLines := []string{
+		"#!/usr/bin/env bash",
+		"echo 'gitcloak git pre-commit hook'",
+		"",
+		"prog_name=\"$(basename $0)\"",
+		"",
+		"## Check if gitcloak is present",
+		"which gitcloak >/dev/null 2>&1",
+		"retval=$?",
+		"if [ $retval -ne 0 ]; then",
+		"  echo \"$prog_name: gitcloak is not installed.\" >&2",
+		"  exit 1",
+		"fi",
+		"",
+		"gitcloak commit",
+		"exit $?",
+		"",
+	}
+	if fs.IsPresent(scriptPath) {
+		Warn("git hook %s is already present", scriptPath)
+		Info("Please add following lines in %s\n%v", scriptPath, strings.Join(scriptLines, LineBreak()))
+		return fmt.Errorf("git hook %s is already present", scriptPath)
+	}
+
+	err = fs.CreateShellScript(scriptPath, scriptLines)
+	if err != nil {
+		Warn("Error in creating git hook file %s", scriptPath)
+		return err
+	}
+	Info("Create git hook %s", scriptPath)
+	return nil
+}
