@@ -88,6 +88,7 @@ Date:   Mon Sep 4 16:46:21 2023 +0530
 
 * Let us time travel i.e. Rollback to commit "First aes encryption with passwordpassword" which corresponds to older key
 ```bash
+gitcloak encrypt         // to ensure no files remain unencrypted
 git reset --hard d79bf3abdc87f74a23513d0e9f44369f5ac34573
 HEAD is now at d79bf3a First aes encryption with passwordpassword
 ```
