@@ -113,6 +113,7 @@ make install
 
 * [Initialization and Single File Encryption](examples/single_file.md)
 * [Initialization and Multiple Files (Regex) Encryption](examples/multi_files.md)
+* [Git Time Travel to Older File Versions with Different Encryption Key/Seed](examples/git_reset_hard.md)
 
 ## Acknowledgement
 
