@@ -99,7 +99,7 @@ HEAD is now at d79bf3a First aes encryption with passwordpassword
 cat .gitcloak/ggcmap.txt | grep 92870958d876fab25f082c0c929fdf8933ebc6d9 | cut -d= -f2-
 5b31f96d2c343d66cc71b070feaf7b18d777cfd6
 ```
-* Or you can use [textfilekv-cli tool]()
+* Or you can use [textfilekv-cli tool](https://github.com/miteshbsjat/textfilekv-cli)
 ```bash
 textfilekv-cli -f .gitcloak/ggcmap.txt get -k 92870958d876fab25f082c0c929fdf8933ebc6d9
 5b31f96d2c343d66cc71b070feaf7b18d777cfd6
